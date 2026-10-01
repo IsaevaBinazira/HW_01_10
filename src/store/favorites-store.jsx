@@ -23,6 +23,7 @@ const useAddToFavorite = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: (error) => {
       if (error.response?.status === 401) {
@@ -43,6 +44,7 @@ const useRemoveFromFavorite = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: (error) => {
       if (error.response?.status === 401) {
