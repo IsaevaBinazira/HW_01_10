@@ -6,130 +6,31 @@ import { $mainApi } from "../api/http.js";
 function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["product", productId],
-
-    queryFn: async () => {
-      const response = await $mainApi.get(`/products/${productId}`);
-
-      return response.data;
-    },
+    queryFn: async () => (await $mainApi.get(`/products/${productId}`)).data,
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-red-50">
-        <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-red-200 border-t-red-600"></div>
-
-          <p className="mt-4 font-medium text-red-500">
-            Загружаем товар...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-red-50 px-5">
-        <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-xl">
-
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl">
-            ⚠️
-          </div>
-
-          <h1 className="mt-5 text-2xl font-bold text-red-800">
-            Товар не найден
-          </h1>
-
-          <p className="mt-3 text-gray-500">
-            Не удалось загрузить информацию о товаре.
-          </p>
-
-          <button
-            onClick={() => navigate("/")}
-            className="mt-6 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700"
-          >
-            ← Вернуться к товарам
-          </button>
-
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingState label="Загружаем товар" />;
+  if (isError || !data) return <ErrorState onBack={() => navigate("/")} />;
 
   return (
-    <div className="min-h-screen bg-red-50 px-5 py-10">
-
-      <div className="mx-auto max-w-4xl">
-
-        <button
-          onClick={() => navigate("/")}
-          className="mb-8 flex items-center gap-2 rounded-xl border border-red-200 bg-white px-5 py-3 font-medium text-red-600 shadow-sm transition duration-200 hover:bg-red-600 hover:text-white"
-        >
-          ← Вернуться к товарам
-        </button>
-
-        <div className="overflow-hidden rounded-3xl bg-white shadow-xl">
-
-          <div className="h-2 bg-red-600"></div>
-
-          <div className="p-7 md:p-12">
-
-            <div className="flex items-center justify-between">
-
-              <span className="rounded-full bg-red-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-red-600">
-                Product
-              </span>
-
-              <span className="text-sm text-gray-400">
-                ID: {productId}
-              </span>
-
-            </div>
-
-            <h1 className="mt-7 text-4xl font-bold text-red-900 md:text-5xl">
-              {data.name}
-            </h1>
-
-            <p className="mt-5 text-lg leading-8 text-gray-600">
-              {data.description}
-            </p>
-
-            <div className="my-10 h-px bg-red-100"></div>
-
-            <div className="flex flex-col gap-6 rounded-2xl bg-red-50 p-6 md:flex-row md:items-center md:justify-between">
-
-              <div>
-                <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-                  Цена
-                </p>
-
-                <p className="mt-2 text-3xl font-bold text-red-600">
-                  {data.price} сом
-                </p>
-              </div>
-
-              <button
-                className="rounded-xl bg-red-600 px-7 py-4 font-semibold text-white shadow-md transition duration-200 hover:-translate-y-1 hover:bg-red-700 hover:shadow-lg"
-              >
-                🛒 Добавить в корзину
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-
-        <p className="mt-6 text-center text-sm text-gray-400">
-          Product Store ❤️
-        </p>
-
+    <section className="relative min-h-[calc(100vh-76px)] overflow-hidden bg-zinc-950 px-4 py-8 text-white sm:px-6 sm:py-12 lg:px-8">
+      <div className="absolute -right-36 top-0 size-112 rounded-full bg-red-600/20 blur-3xl" />
+      <div className="relative mx-auto max-w-5xl">
+        <button type="button" onClick={() => navigate("/")} className="group mb-8 inline-flex items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-white"><span className="grid size-9 place-items-center rounded-full border border-white/10 bg-white/5 transition group-hover:-translate-x-1 group-hover:border-red-500 group-hover:bg-red-600">←</span>Назад в каталог</button>
+        <article className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[.06] shadow-2xl shadow-black/40 backdrop-blur-xl"><div className="h-1.5 bg-gradient-to-r from-transparent via-red-500 to-transparent" /><div className="p-7 sm:p-10 lg:p-14"><div className="flex items-center justify-between gap-4"><span className="rounded-full border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[.18em] text-red-300">Redshop selection</span><span className="text-xs font-bold uppercase tracking-wider text-zinc-500">#{productId}</span></div><h1 className="mt-8 max-w-3xl text-4xl font-black tracking-tight sm:text-5xl">{data.name}</h1><p className="mt-5 max-w-3xl text-base leading-8 text-zinc-300 sm:text-lg">{data.description || ""}</p><div className="my-10 h-px bg-gradient-to-r from-red-500/70 via-white/10 to-transparent" /><div className="flex flex-col gap-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"><div><p className="text-xs font-black uppercase tracking-[.18em] text-zinc-500">Цена сейчас</p><p className="mt-2 text-4xl font-black text-red-500">{data.price} <span className="text-xl">сом</span></p></div><button type="button" className="group flex items-center justify-center gap-3 rounded-2xl bg-red-600 px-7 py-4 font-black shadow-xl shadow-red-600/25 transition hover:-translate-y-1 hover:bg-red-500">Добавить в корзину <span className="transition-transform group-hover:translate-x-1">→</span></button></div></div></article>
       </div>
-    </div>
+    </section>
   );
+}
+
+function LoadingState({ label }) {
+  return <div className="grid min-h-[calc(100vh-76px)] place-items-center bg-zinc-950"><div className="text-center"><div className="mx-auto size-11 animate-spin rounded-full border-4 border-red-500/20 border-t-red-500" /><p className="mt-4 text-sm font-bold uppercase tracking-[.2em] text-zinc-400">{label}</p></div></div>;
+}
+
+function ErrorState({ onBack }) {
+  return <section className="grid min-h-[calc(100vh-76px)] place-items-center bg-zinc-950 px-4 text-center text-white"><div className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/[.06] p-10 shadow-2xl shadow-black/30"><span className="text-xs font-black uppercase tracking-[.2em] text-red-400">Not found</span><h1 className="mt-5 text-3xl font-black">Товар не найден.</h1><p className="mt-3 text-zinc-400">Не удалось загрузить информацию о товаре.</p><button type="button" onClick={onBack} className="mt-7 rounded-2xl bg-red-600 px-6 py-3.5 font-black transition hover:bg-red-500">К каталогу →</button></div></section>;
 }
 
 export default ProductDetail;

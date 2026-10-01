@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { $mainApi } from "../api/http.js";
+import useAuth from "../hooks/use-auth.js";
 
 const saveSession = (response) => {
   const token = response?.accessToken || response?.data?.accessToken;
@@ -18,6 +19,7 @@ const getErrorMessage = (error) => {
 
 export const useRegisterMutation = () => {
   const navigate = useNavigate();
+  const setAuth = useAuth((state) => state.setAuth);
 
   return useMutation({
     mutationFn: async (payload) => {
@@ -27,6 +29,7 @@ export const useRegisterMutation = () => {
     },
     onSuccess: (response) => {
       saveSession(response);
+      setAuth(true);
       toast.success("Регистрация прошла успешно!");
       navigate("/");
     },
@@ -38,6 +41,7 @@ export const useRegisterMutation = () => {
 
 export const useLoginMutation = () => {
   const navigate = useNavigate();
+  const setAuth = useAuth((state) => state.setAuth);
 
   return useMutation({
     mutationFn: async (payload) => {
@@ -47,6 +51,7 @@ export const useLoginMutation = () => {
     },
     onSuccess: (response) => {
       saveSession(response);
+      setAuth(true);
       toast.success("С возвращением!");
       navigate("/");
     },

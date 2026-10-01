@@ -3,7 +3,7 @@ import Header from "../components/header.jsx";
 
 function Layout() {
   return (
-    <div className='max-w-[1200px] mx-auto'> 
+    <div className="min-h-screen bg-zinc-950">
       <Header/>
       <main>
         <Outlet />

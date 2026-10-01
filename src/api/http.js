@@ -4,5 +4,16 @@ const createAxios = () => axios.create({
   })
 
   const $mainApi = createAxios();
+  const $authApi = createAxios();
 
-  export { $mainApi };
+  $authApi.interceptors.request.use(
+    (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },  
+);
+
+  export { $mainApi, $authApi };
